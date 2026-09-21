@@ -2,7 +2,7 @@
 
 > Machine learning model that predicts annual salary based on job title, experience, education, skills, industry, location, and remote work status. Trained on 250K job records using scikit-learn.
 
-**🔗 Live App:** [https://your-name-salary-predictor.streamlit.app](https://your-name-salary-predictor.streamlit.app)
+**🔗 Live App:** [https://salary-predictor-hg58tmhae9jv9qe3pt2rkr.streamlit.app/](https://salary-predictor-hg58tmhae9jv9qe3pt2rkr.streamlit.app/)
 
 ![Salary Predictor Dashboard](app_screenshot.png)
 
