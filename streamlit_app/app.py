@@ -15,7 +15,37 @@ st.caption("ML model trained on 250K job records | scikit-learn + Streamlit")
 
 @st.cache_resource
 def get_model():
-    return load_model()
+    """Train the model at startup (cached, runs once per session)."""
+    from sklearn.ensemble import RandomForestRegressor
+    from sklearn.compose import ColumnTransformer
+    from sklearn.pipeline import Pipeline
+    from sklearn.impute import SimpleImputer
+    from sklearn.preprocessing import StandardScaler, OneHotEncoder
+    from sklearn.model_selection import train_test_split
+
+    df = load_data()
+    cat_cols = df.select_dtypes(include="object").columns.tolist()
+    num_cols = [c for c in df.select_dtypes(include="number").columns if c != "salary"]
+
+    preprocessor = ColumnTransformer(transformers=[
+        ("num", Pipeline([
+            ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler())
+        ]), num_cols),
+        ("cat", Pipeline([
+            ("imputer", SimpleImputer(strategy="most_frequent")),
+            ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False))
+        ]), cat_cols)
+    ])
+
+    X = df.drop("salary", axis=1)
+    y = df["salary"]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    model = RandomForestRegressor(n_estimators=100, random_state=42, n_jobs=-1)
+    pipe = Pipeline([("prep", preprocessor), ("model", model)])
+    pipe.fit(X_train, y_train)
+    return pipe   
 
 pipe = get_model()
 
